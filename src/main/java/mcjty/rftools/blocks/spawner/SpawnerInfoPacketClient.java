@@ -6,22 +6,22 @@ import net.minecraft.client.entity.EntityPlayerSP;
 
 public class SpawnerInfoPacketClient implements InfoPacketClient {
 
-    private float[] matter;
+    private long[] matter;
 
-    public static float matterReceived[] = null;
+    public static long matterReceived[] = null;
 
     public SpawnerInfoPacketClient() {
     }
 
-    public SpawnerInfoPacketClient(float[] matter) {
+    public SpawnerInfoPacketClient(long[] matter) {
         this.matter = matter;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         if (buf.readBoolean()) {
-            matter = new float[] {
-                buf.readFloat(), buf.readFloat(), buf.readFloat()
+            matter = new long[] {
+                buf.readLong(), buf.readLong(), buf.readLong()
             };
         }
     }
@@ -32,9 +32,9 @@ public class SpawnerInfoPacketClient implements InfoPacketClient {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeFloat(matter[0]);
-            buf.writeFloat(matter[1]);
-            buf.writeFloat(matter[2]);
+            buf.writeLong(matter[0]);
+            buf.writeLong(matter[1]);
+            buf.writeLong(matter[2]);
         }
     }
 

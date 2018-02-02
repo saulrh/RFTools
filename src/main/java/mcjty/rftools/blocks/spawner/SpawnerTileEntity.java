@@ -36,7 +36,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     private static final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
             "The amount of matter in the third slot", "The name of the mob being spawned"};
 
-    private float matter[] = new float[]{0, 0, 0};
+    private long matter[] = new long[]{0L, 0L, 0L};
     private boolean checkSyringe = true;
     private String prevMobId = null;
     private String mobId = "";
@@ -134,7 +134,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;       // No matter was added.
         }
         int materialType = 0;
-        Float factor = null;
+        Long factor = null;
         List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = getSpawnAmounts();
         for (SpawnerConfiguration.MobSpawnAmount spawnAmount : spawnAmounts) {
             factor = spawnAmount.match(stack);
@@ -148,10 +148,10 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;
         }
 
-        float mm = matter[materialType];
-        mm += m * factor * 3.0f / (3.0f - beamerInfusionFactor);
-        if (mm > SpawnerConfiguration.maxMatterStorage) {
-            mm = SpawnerConfiguration.maxMatterStorage;
+        long mm = matter[materialType];
+        mm += m * Double.valueOf(factor * 3.0d / (3.0d - beamerInfusionFactor)).longValue();
+        if (mm/2520 > SpawnerConfiguration.maxMatterStorage) {
+            mm = SpawnerConfiguration.maxMatterStorage*2520L;
         }
         matter[materialType] = mm;
         markDirty();
@@ -166,7 +166,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         return spawnAmounts;
     }
 
-    public float[] getMatter() {
+    public long[] getMatter() {
         return matter;
     }
 
@@ -315,9 +315,19 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        matter[0] = tagCompound.getFloat("matter0");
-        matter[1] = tagCompound.getFloat("matter1");
-        matter[2] = tagCompound.getFloat("matter2");
+		/* support for old values
+		if (!tagCompound.getFloat("matter0").equals(0f) || !tagCompound.getFloat("matter1").equals(0f) || !tagCompound.getFloat("matter0").equals(0f))
+		{
+			matter[0]=Double.valueOf(tagCompound.getFloat("matter0") * 2520D).longValue();
+			matter[1]=Double.valueOf(tagCompound.getFloat("matter1") * 2520D).longValue();
+			matter[2]=Double.valueOf(tagCompound.getFloat("matter2") * 2520D).longValue();
+		}else
+		{
+		*/
+        matter[0] = tagCompound.getLong("matter0");
+        matter[1] = tagCompound.getLong("matter1");
+        matter[2] = tagCompound.getLong("matter2");
+		//}
         if (tagCompound.hasKey("mobId")) {
             mobId = EntityTools.fixEntityId(tagCompound.getString("mobId"));
         } else {
@@ -335,9 +345,9 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setFloat("matter0", matter[0]);
-        tagCompound.setFloat("matter1", matter[1]);
-        tagCompound.setFloat("matter2", matter[2]);
+        tagCompound.setLong("matter0", matter[0]);
+        tagCompound.setLong("matter1", matter[1]);
+        tagCompound.setLong("matter2", matter[2]);
         if (mobId != null && !mobId.isEmpty()) {
             tagCompound.setString("mobId", mobId);
         }

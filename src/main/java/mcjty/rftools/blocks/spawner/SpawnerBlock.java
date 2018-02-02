@@ -76,12 +76,12 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof SpawnerTileEntity) {
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
-            float[] matter = spawnerTileEntity.getMatter();
+            long[] matter = spawnerTileEntity.getMatter();
             DecimalFormat fmt = new DecimalFormat("#.##");
             fmt.setRoundingMode(RoundingMode.DOWN);
-            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
-            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
-            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]/2520D));
+            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]/2520D));
+            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]/2520D));
         }
     }
 
@@ -101,13 +101,13 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
                         te.getPos())));
             }
 
-            float[] matter = SpawnerInfoPacketClient.matterReceived;
+            long[] matter = SpawnerInfoPacketClient.matterReceived;
             if (matter != null && matter.length == 3) {
                 DecimalFormat fmt = new DecimalFormat("#.##");
                 fmt.setRoundingMode(RoundingMode.DOWN);
-                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
-                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
-                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]/2520D));
+                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]/2520D));
+                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]/2520D));
             }
         }
         return currenttip;

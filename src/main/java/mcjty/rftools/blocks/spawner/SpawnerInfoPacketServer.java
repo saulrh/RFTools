@@ -40,7 +40,7 @@ public class SpawnerInfoPacketServer implements InfoPacketServer {
     @Override
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP player) {
         WorldServer world = DimensionManager.getWorld(dimension);
-        float matter[] = null;
+        long matter[] = null;
         if (world != null) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof SpawnerTileEntity) {

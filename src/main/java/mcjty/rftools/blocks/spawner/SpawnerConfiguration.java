@@ -32,7 +32,7 @@ public class SpawnerConfiguration {
     public static int defaultMobSpawnRf;
     public static final Map<String,List<MobSpawnAmount>> mobSpawnAmounts = new HashMap<>();
     public static final List<MobSpawnAmount> defaultSpawnAmounts = new ArrayList<>();
-    public static final Map<ResourceLocation,Float> livingMatter = new HashMap<>();
+    public static final Map<ResourceLocation,Long> livingMatter = new HashMap<>();
 
     public static final int MATERIALTYPE_KEY = 0;
     public static final int MATERIALTYPE_BULK = 1;
@@ -87,7 +87,8 @@ public class SpawnerConfiguration {
                 try {
                     // value[0] is type and is no longer used
                     String name = value[1];
-                    Float factor = Float.parseFloat(value[2]);
+					// 2520 <- 9 * 8 * 5 * 7 <- largest multiples of primenumbers bellow 10
+                    Long factor = Float.valueOf(2520*Float.parseFloat(value[2])).longValue();
                     livingMatter.put(new ResourceLocation(name), factor);
                 } catch (Exception e) {
                     Logging.logError("Badly formatted 'livingmatter' configuration option!");
@@ -137,21 +138,21 @@ public class SpawnerConfiguration {
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", block.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(block.getRegistryName(), factor);
+        livingMatter.put(block.getRegistryName(), Float.valueOf(2520*factor).longValue());
         return counter+1;
     }
 
     private static int addLiving(Configuration cfg, Item item, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", item.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(item.getRegistryName(), factor);
+        livingMatter.put(item.getRegistryName(), Float.valueOf(2520*factor).longValue());
         return counter+1;
     }
 
     public static void readMobSpawnAmountConfig(Configuration cfg) {
         defaultMobSpawnRf = 10000;
-        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
-        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
-        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 2520L));
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20L*2520L));
+        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120L*2520L));
 
         ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
         if (category.isEmpty()) {
@@ -371,7 +372,7 @@ public class SpawnerConfiguration {
         String type;
         ResourceLocation itemname;
         int meta;
-        float amount;
+        long amount;
         try {
             type = splitted[0];
             String n = splitted[1];
@@ -381,7 +382,7 @@ public class SpawnerConfiguration {
                 itemname = new ResourceLocation(n);
             }
             meta = Integer.parseInt(splitted[2]);
-            amount = Float.parseFloat(splitted[3]);
+            amount = Float.valueOf(2520*Float.parseFloat(splitted[3])).longValue();
         } catch (NumberFormatException e) {
             Logging.logError("Something went wrong parsing the spawnamount setting for '" + id + "'!");
             return;
@@ -410,9 +411,9 @@ public class SpawnerConfiguration {
 
     public static class MobSpawnAmount {
         private final ItemStack object;
-        private final float amount;
+        private final long amount;
 
-        public MobSpawnAmount(ItemStack object, float amount) {
+        public MobSpawnAmount(ItemStack object, long amount) {
             this.object = object;
             this.amount = amount;
         }
@@ -421,18 +422,18 @@ public class SpawnerConfiguration {
             return object;
         }
 
-        public float getAmount() {
+        public long getAmount() {
             return amount;
         }
 
-        public Float match(ItemStack stack) {
+        public Long match(ItemStack stack) {
             if (object.isEmpty()) {
                 // Living?
                 Item item = stack.getItem();
                 return livingMatter.get(item.getRegistryName());
             }
             if (stack.isItemEqual(object)) {
-                return 1.0f;
+                return 2520L;
             }
             return null;
         }

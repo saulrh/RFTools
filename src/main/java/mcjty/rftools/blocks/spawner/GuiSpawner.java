@@ -104,14 +104,14 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                             tileEntity.getPos())));
                 }
 
-                float[] matter = SpawnerInfoPacketClient.matterReceived;
+                long[] matter = SpawnerInfoPacketClient.matterReceived;
                 if (matter == null || matter.length != 3) {
-                    matter = new float[] { 0, 0, 0 };
+                    matter = new long[] { 0L, 0L, 0L };
                 }
 
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
-                    float amount = spawnAmount.getAmount();
+                    long amount = spawnAmount.getAmount();
                     if (b.isEmpty()) {
                         Object[] blocks = {Blocks.LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF};
                         int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
@@ -125,8 +125,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                     }
                     DecimalFormat format = new DecimalFormat("#.##");
                     format.setRoundingMode(RoundingMode.DOWN);
-                    String mf = format.format(matter[i]);
-                    labels[i].setText(mf + "/" + Float.toString(amount));
+                    String mf = format.format(matter[i]/2520D);
+                    labels[i].setText(mf + "/" + Double.toString(amount/2520D));
                     i++;
                 }
             }
